@@ -23,7 +23,7 @@ Para acesso:
 - [/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
 ### Modelo Excel para inserção de dados
-![alt text](modelo-inserção dados.png "Modelo planilha para inserção de dados")
+(https://github.com/albuquerquealan/desafio-leroyMerlin/blob/main/modelo-inser%C3%A7%C3%A3o%20dados.png "Modelo planilha para inserção de dados")
 
 Devido a limitações de tempo, caso a planilha fuja do modelo acima o endpoint 
 responsável [EndPoint Cadastro(POST)](http://localhost:8080/products) 
