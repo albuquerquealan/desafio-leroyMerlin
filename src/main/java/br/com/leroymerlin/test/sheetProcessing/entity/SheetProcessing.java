@@ -37,4 +37,13 @@ public class SheetProcessing {
     public LocalDateTime getProcessingDate() {
         return processingDate;
     }
+
+    @Override
+    public String toString() {
+        return "SheetProcessing{" +
+                "id=" + id +
+                ", processed=" + processed +
+                ", processingDate=" + processingDate +
+                '}';
+    }
 }

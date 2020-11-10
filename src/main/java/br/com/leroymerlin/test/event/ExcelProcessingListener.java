@@ -3,6 +3,7 @@ package br.com.leroymerlin.test.event;
 import br.com.leroymerlin.test.event.dto.FileDTO;
 import br.com.leroymerlin.test.product.ProductService;
 import br.com.leroymerlin.test.product.entity.Product;
+import br.com.leroymerlin.test.rabbitMq.RabbitMQSender;
 import br.com.leroymerlin.test.sheetProcessing.SheetProcessingService;
 import br.com.leroymerlin.test.sheetProcessing.entity.SheetProcessing;
 import br.com.leroymerlin.test.util.UtilProduct;
@@ -30,11 +31,14 @@ public class ExcelProcessingListener {
 
     private final SheetProcessingService sheetProcessingService;
 
+    private final RabbitMQSender rabbitMQSender;
+
     private Double category;
 
-    public ExcelProcessingListener(ProductService productService, SheetProcessingService sheetProcessingService) {
+    public ExcelProcessingListener(ProductService productService, SheetProcessingService sheetProcessingService, RabbitMQSender rabbitMQSender) {
         this.productService = productService;
         this.sheetProcessingService = sheetProcessingService;
+        this.rabbitMQSender = rabbitMQSender;
     }
 
     @EventListener
@@ -55,13 +59,11 @@ public class ExcelProcessingListener {
                 }
             });
             productService.saveAll(products);
-            sheetProcessing = new SheetProcessing(Boolean.TRUE, LocalDateTime.now());
-            sheetProcessingService.save(sheetProcessing);
+            sheetProcessing = sheetProcessingService.save(new SheetProcessing(Boolean.TRUE, LocalDateTime.now()));
+            rabbitMQSender.send("Excel successfully read =" + sheetProcessing.toString());
         }catch(Exception e){
-            sheetProcessing = new SheetProcessing(Boolean.FALSE, LocalDateTime.now());
-            sheetProcessingService.save(sheetProcessing);
-        }finally {
-            //send to queue
+            sheetProcessing = sheetProcessingService.save(new SheetProcessing(Boolean.FALSE, LocalDateTime.now()));
+            rabbitMQSender.send("Excel read without success =" + sheetProcessing.toString());
         }
     }
 
