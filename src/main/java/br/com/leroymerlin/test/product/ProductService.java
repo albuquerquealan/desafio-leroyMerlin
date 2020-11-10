@@ -1,7 +1,6 @@
 package br.com.leroymerlin.test.product;
 
 import br.com.leroymerlin.test.product.entity.Product;
-
 import java.util.List;
 
 public interface ProductService {

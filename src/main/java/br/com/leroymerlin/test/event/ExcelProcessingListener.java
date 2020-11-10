@@ -8,10 +8,8 @@ import br.com.leroymerlin.test.util.exception.ConverterException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -25,9 +23,14 @@ import java.util.List;
 @Component
 public class ExcelProcessingListener {
 
-    @Autowired
-    ProductService productService;
+
+    private final ProductService productService;
+
     private Double category;
+
+    public ExcelProcessingListener(ProductService productService) {
+        this.productService = productService;
+    }
 
     @EventListener
     public void lister(FileDTO dto) throws IOException {

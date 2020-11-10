@@ -1,9 +1,9 @@
 package br.com.leroymerlin.test.product.entity;
 
+import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.math.BigDecimal;
 
 @Entity
 @Table
