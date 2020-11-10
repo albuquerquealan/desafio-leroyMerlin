@@ -3,6 +3,8 @@ package br.com.leroymerlin.test.event;
 import br.com.leroymerlin.test.event.dto.FileDTO;
 import br.com.leroymerlin.test.product.ProductService;
 import br.com.leroymerlin.test.product.entity.Product;
+import br.com.leroymerlin.test.sheetProcessing.SheetProcessingService;
+import br.com.leroymerlin.test.sheetProcessing.entity.SheetProcessing;
 import br.com.leroymerlin.test.util.UtilProduct;
 import br.com.leroymerlin.test.util.exception.ConverterException;
 import org.apache.poi.ss.usermodel.Row;
@@ -16,6 +18,7 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -23,19 +26,22 @@ import java.util.List;
 @Component
 public class ExcelProcessingListener {
 
-
     private final ProductService productService;
+
+    private final SheetProcessingService sheetProcessingService;
 
     private Double category;
 
-    public ExcelProcessingListener(ProductService productService) {
+    public ExcelProcessingListener(ProductService productService, SheetProcessingService sheetProcessingService) {
         this.productService = productService;
+        this.sheetProcessingService = sheetProcessingService;
     }
 
     @EventListener
     public void lister(FileDTO dto) throws IOException {
         Path temp = saveTempFile(dto);
         List<Product> products = new ArrayList<>();
+        SheetProcessing sheetProcessing;
         try (FileInputStream file = new FileInputStream(temp.toFile())) {
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheetAt = workbook.getSheetAt(0);
@@ -49,7 +55,13 @@ public class ExcelProcessingListener {
                 }
             });
             productService.saveAll(products);
-
+            sheetProcessing = new SheetProcessing(Boolean.TRUE, LocalDateTime.now());
+            sheetProcessingService.save(sheetProcessing);
+        }catch(Exception e){
+            sheetProcessing = new SheetProcessing(Boolean.FALSE, LocalDateTime.now());
+            sheetProcessingService.save(sheetProcessing);
+        }finally {
+            //send to queue
         }
     }
 
